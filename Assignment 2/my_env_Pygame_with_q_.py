@@ -4,7 +4,7 @@ import pygame
 
 
 class PadmEnv(gym.Env):
-    def __init__(self, grid_size=10, tile_size=64, render_mode=True):
+    def __init__(self, grid_size=10, tile_size=64, render_mode=False):
         super().__init__()
         self.grid_size = grid_size
         self.tile_size = tile_size
@@ -31,33 +31,36 @@ class PadmEnv(gym.Env):
         self.observation_space = gym.spaces.Box(low=0, high=grid_size, shape=(2,), dtype=np.int32)
 
         # Initialize Pygame
-        pygame.init()
-        self.screen_size = self.grid_size * self.tile_size
-        self.screen = pygame.display.set_mode((self.screen_size, self.screen_size))
-        pygame.display.set_caption("RL Plays Game of Thrones")
+        if self.render_mode:
+            pygame.init()
+            self.screen_size = self.grid_size * self.tile_size
+            self.screen = pygame.display.set_mode((self.screen_size, self.screen_size))
+            pygame.display.set_caption("RL Plays Game of Thrones")
 
-        # Load images
-        self.images = {
-            "Dragon": pygame.image.load(r"D:\Thi\Padm\Images\obstacles\dragon_balerion.png"),
-            "Night-walker": pygame.image.load(r"D:\Thi\Padm\Images\obstacles\nightwalker.png"),
-            "Army": pygame.image.load(r"D:\Thi\Padm\Images\obstacles\Army.png"),
-            "Daenerys-Targaryen": pygame.image.load(r"D:\Thi\Padm\Images\states\Rahnerya.png"),
-            "Iron-throne": pygame.image.load(r"D:\Thi\Padm\Images\states\iron_throne.png"),
-            "Dragon-eggs": pygame.image.load(r"D:\Thi\Padm\Images\rewards\Dragon-eggs.png"),
-            "kingdoms": {
-                "Harrenhall": pygame.image.load(r"D:\Thi\Padm\Images\rewards\Kingdoms\Harrenhall.jpeg"),
-                "River-Lands": pygame.image.load(r"D:\Thi\Padm\Images\rewards\Kingdoms\River-lands.png"),
-                "Kings-Landing": pygame.image.load(r"D:\Thi\Padm\Images\rewards\Kingdoms\Kings-landing.png"),
-                "storm-lands": pygame.image.load(r"D:\Thi\Padm\Images\rewards\Kingdoms\Storm-lands.jpeg"),
-                "Westeros": pygame.image.load(r"D:\Thi\Padm\Images\rewards\Kingdoms\Westeros.png")
+            # Load images
+            self.images = {
+                "Dragon": pygame.image.load(r"D:\Thi\Padm\Images\obstacles\dragon_balerion.png"),
+                "Night-walker": pygame.image.load(r"D:\Thi\Padm\Images\obstacles\nightwalker.png"),
+                "Army": pygame.image.load(r"D:\Thi\Padm\Images\obstacles\Army.png"),
+                "Daenerys-Targaryen": pygame.image.load(r"D:\Thi\Padm\Images\states\Rahnerya.png"),
+                "Iron-throne": pygame.image.load(r"D:\Thi\Padm\Images\states\iron_throne.png"),
+                "Dragon-eggs": pygame.image.load(r"D:\Thi\Padm\Images\rewards\Dragon-eggs.png"),
+                "kingdoms": {
+                    "Harrenhall": pygame.image.load(r"D:\Thi\Padm\Images\rewards\Kingdoms\Harrenhall.jpeg"),
+                    "River-Lands": pygame.image.load(r"D:\Thi\Padm\Images\rewards\Kingdoms\River-lands.png"),
+                    "Kings-Landing": pygame.image.load(r"D:\Thi\Padm\Images\rewards\Kingdoms\Kings-landing.png"),
+                    "storm-lands": pygame.image.load(r"D:\Thi\Padm\Images\rewards\Kingdoms\Storm-lands.jpeg"),
+                    "Westeros": pygame.image.load(r"D:\Thi\Padm\Images\rewards\Kingdoms\Westeros.png")
+                }
             }
-        }
 
-        # Resize all images to tile size
-        for items in ["Dragon", "Night-walker", "Army", "Daenerys-Targaryen", "Iron-throne", "Dragon-eggs"]:
-            self.images[items] = pygame.transform.scale(self.images[items], (tile_size, tile_size))
-        for k in self.kingdoms:
-            self.images["kingdoms"][k] = pygame.transform.scale(self.images["kingdoms"][k], (tile_size, tile_size))
+            # Resize all images to tile size
+            for items in ["Dragon", "Night-walker", "Army", "Daenerys-Targaryen", "Iron-throne", "Dragon-eggs"]:
+                self.images[items] = pygame.transform.scale(self.images[items], (tile_size, tile_size))
+            for k in self.kingdoms:
+                self.images["kingdoms"][k] = pygame.transform.scale(self.images["kingdoms"][k], (tile_size, tile_size))
+        else:
+            self.images = {}
 
     def reset(self):
         self.agent_state = np.array([1,4])
