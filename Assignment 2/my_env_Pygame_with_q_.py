@@ -119,6 +119,8 @@ class PadmEnv(gym.Env):
         return self.agent_state, reward, done, info
 
     def render(self):
+        if not self.render_mode:
+            return  
         self.screen.fill((255, 255, 255))  
 
         for x in range(self.grid_size + 1):
