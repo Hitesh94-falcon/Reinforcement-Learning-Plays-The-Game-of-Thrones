@@ -4,7 +4,7 @@ import pygame
 
 
 class PadmEnv(gym.Env):
-    def __init__(self, grid_size=10, tile_size=64, render_mode=False):
+    def __init__(self, grid_size=9, tile_size=64, render_mode=False):
         super().__init__()
         self.grid_size = grid_size
         self.tile_size = tile_size
@@ -62,10 +62,15 @@ class PadmEnv(gym.Env):
         else:
             self.images = {}
 
-    def reset(self):
-        self.agent_state = np.array([1,4])
-        self.captured_kingdoms.clear()
-        return self.agent_state
+    def reset(self,random_initialization=False):
+        if random_initialization:
+            x_rand = np.random.randint(0,self.grid_size)
+            y_rand = np.random.randint(0,self.grid_size)
+            self.agent_state = np.array[x_rand,y_rand]
+        else:
+            self.agent_state = np.array([1,4])
+            self.captured_kingdoms.clear()
+            return self.agent_state
 
     def step(self, action):
         proposed_state = self.agent_state.copy()
