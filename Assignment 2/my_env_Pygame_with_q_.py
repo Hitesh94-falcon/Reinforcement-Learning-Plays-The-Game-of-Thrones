@@ -66,7 +66,7 @@ class PadmEnv(gym.Env):
         if random_initialization:
             x_rand = np.random.randint(0,self.grid_size)
             y_rand = np.random.randint(0,self.grid_size)
-            self.agent_state = np.array[x_rand,y_rand]
+            self.agent_state = np.array([x_rand,y_rand])
         else:
             self.agent_state = np.array([1,4])
             self.captured_kingdoms.clear()
