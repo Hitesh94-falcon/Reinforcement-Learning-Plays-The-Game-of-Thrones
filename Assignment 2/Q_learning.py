@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import csv,os
 
-csv_path = r"D:\Thi\Padm\Assignment 2\intermeditaeqtables\log(rand_inti).csv"
+csv_path = r"D:\Thi\Padm\Assignment 2\intermeditaeqtables\log(rand_inti(2)).csv"
 
 def log_episode_result(episode,t_rewards):
     file_exists = os.path.isfile(csv_path)
@@ -70,7 +70,6 @@ def train_q_learning(env,
                 #! -------
                 if done:
                     break
-
             #! Step 6: Perform epsilon decay
             #! -------
             epsilon = max(epsilon_min, epsilon * epsilon_decay)
@@ -79,7 +78,7 @@ def train_q_learning(env,
 
             print(f"in episode{episode+1}")
             if (episode + 1) % 100 == 0:
-                np.save(f"D:\Thi\Padm\Assignment 2\intermeditaeqtables\q_table_ep{episode+1}.npy", q_table)
+                np.save(f"D:\Thi\Padm\Assignment 2\intermeditaeqtables\q_table_ep{episode+1}_randiniti.npy", q_table)
                 print(f"Checkpoint saved: q_table_ep{episode+1}.npy")
             
             if done:
