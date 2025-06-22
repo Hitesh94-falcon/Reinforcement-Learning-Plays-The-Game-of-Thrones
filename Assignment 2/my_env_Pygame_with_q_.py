@@ -62,15 +62,21 @@ class PadmEnv(gym.Env):
         else:
             self.images = {}
 
-    def reset(self,random_initialization=False):
+    def reset(self,random_initialization=True):
         if random_initialization:
-            x_rand = np.random.randint(0,self.grid_size)
-            y_rand = np.random.randint(0,self.grid_size)
-            self.agent_state = np.array([x_rand,y_rand])
+            print("the agent is being intalized randomly")
+
+            while True:
+                x_rand = np.random.randint(0, self.grid_size)
+                y_rand = np.random.randint(0, self.grid_size)
+                if (x_rand, y_rand) not in sum(self.obstacles.values(), []):
+                    self.agent_state = np.array([x_rand, y_rand])
+                    break
         else:
             self.agent_state = np.array([1,4])
-            self.captured_kingdoms.clear()
-            return self.agent_state
+            
+        self.captured_kingdoms.clear()
+        return self.agent_state
 
     def step(self, action):
         proposed_state = self.agent_state.copy()
@@ -114,7 +120,7 @@ class PadmEnv(gym.Env):
                 kingdom_name = self.kingdoms[idx]
                 if kingdom_name not in self.captured_kingdoms:
                     self.captured_kingdoms.add(kingdom_name)
-                    reward += 20
+                    reward += 20    
         
 
         in_obstacle = any(np.array_equal(self.agent_state, obs) for obs in all_obstacles)
@@ -127,37 +133,37 @@ class PadmEnv(gym.Env):
         return self.agent_state, reward, done, info
 
     def render(self):
-        if not self.render_mode:
-            return  
-        self.screen.fill((255, 255, 255))  
+        if self.render_mode:
+            print("in render....")
+            self.screen.fill((255, 255, 255))  
 
-        for x in range(self.grid_size + 1):
-            pygame.draw.line(self.screen, (0, 0, 0), (x * self.tile_size, 0), (x * self.tile_size, self.screen_size))
-        for y in range(self.grid_size + 1):
-            pygame.draw.line(self.screen, (0, 0, 0), (0, y * self.tile_size), (self.screen_size, y * self.tile_size))
+            for x in range(self.grid_size + 1):
+                pygame.draw.line(self.screen, (0, 0, 0), (x * self.tile_size, 0), (x * self.tile_size, self.screen_size))
+            for y in range(self.grid_size + 1):
+                pygame.draw.line(self.screen, (0, 0, 0), (0, y * self.tile_size), (self.screen_size, y * self.tile_size))
 
-        # Obstacles
-        for group, coords in self.obstacles.items():
-            for x, y in coords:
-                self.screen.blit(self.images[group], (x * self.tile_size, y * self.tile_size))
+            # Obstacles
+            for group, coords in self.obstacles.items():
+                for x, y in coords:
+                    self.screen.blit(self.images[group], (x * self.tile_size, y * self.tile_size))
 
-        # Rewards
-        for x, y in self.rewards["Dragon-eggs"]:
-            self.screen.blit(self.images["Dragon-eggs"], (x * self.tile_size, y * self.tile_size))
+            # Rewards
+            for x, y in self.rewards["Dragon-eggs"]:
+                self.screen.blit(self.images["Dragon-eggs"], (x * self.tile_size, y * self.tile_size))
 
-        for name, (x, y) in zip(self.kingdoms, self.rewards["Kingdoms"]):
-            self.screen.blit(self.images["kingdoms"][name], (x * self.tile_size, y * self.tile_size))
+            for name, (x, y) in zip(self.kingdoms, self.rewards["Kingdoms"]):
+                self.screen.blit(self.images["kingdoms"][name], (x * self.tile_size, y * self.tile_size))
 
-        # Agent
-        ax, ay = self.agent_state
-        self.screen.blit(self.images["Daenerys-Targaryen"], (ax * self.tile_size, ay * self.tile_size))
+            # Agent
+            ax, ay = self.agent_state
+            self.screen.blit(self.images["Daenerys-Targaryen"], (ax * self.tile_size, ay * self.tile_size))
 
-        # Goal
-        gx, gy = self.goal_state
-        self.screen.blit(self.images["Iron-throne"], (gx * self.tile_size, gy * self.tile_size))
+            # Goal
+            gx, gy = self.goal_state
+            self.screen.blit(self.images["Iron-throne"], (gx * self.tile_size, gy * self.tile_size))
 
-        pygame.display.flip()
-        pygame.time.wait(30)
+            pygame.display.flip()
+            pygame.time.wait(30)
 
     def close(self):
         pygame.quit()

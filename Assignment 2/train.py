@@ -15,7 +15,7 @@ In this case, it is better to use a random initialization.
 """
 random_initialization = True  # If True, the Q-table will be initialized randomly
 
-learning_rate = 0.01  # Learning rate
+learning_rate = 0.1  # Learning rate
 gamma = 0.99  # Discount factor
 epsilon = 1.0  # Exploration rate
 epsilon_min = 0.1  # Minimum exploration rate
@@ -33,7 +33,7 @@ hell_state_coordinates = [(1, 0), (8, 0), (1, 8), (0, 4), (0, 1), (4, 8), (8, 8)
 if train:
     # Create an instance of the environment:
     # --------------------------------------
-    env = create_env(render_mode=False)
+    env = create_env()
 
     # Train a Q-learning agent:
     # -------------------------
