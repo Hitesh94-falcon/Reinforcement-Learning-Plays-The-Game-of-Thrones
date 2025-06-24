@@ -62,7 +62,7 @@ class PadmEnv(gym.Env):
         else:
             self.images = {}
 
-    def reset(self,random_initialization=True):
+    def reset(self,random_initialization=False):
         if random_initialization:
             print("the agent is being intalized randomly")
 
@@ -101,13 +101,14 @@ class PadmEnv(gym.Env):
 
         done = reached_goal and all_kingdoms_captured
 
+
         if reached_goal:
             if all_kingdoms_captured:
-                reward = 100
+                reward = 30
             if len(self.kingdoms) == len(self.captured_kingdoms):
                 print("All the kigdoms captured..... Valhalla")
             else:
-                reward = -5  
+                reward = -10 
                 print("You must capture all kingdoms before reaching the throne!")
 
 
@@ -129,6 +130,11 @@ class PadmEnv(gym.Env):
 
         distance_to_goal = np.linalg.norm(self.goal_state - self.agent_state)
         info = {"Distance to Goal": distance_to_goal}
+
+        if all_kingdoms_captured:
+            reward += -0.5 * distance_to_goal
+        else:
+            reward += -0.3 * distance_to_goal
 
         return self.agent_state, reward, done, info
 

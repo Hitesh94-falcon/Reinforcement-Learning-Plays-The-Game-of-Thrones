@@ -5,15 +5,15 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import csv,os
 
-csv_path = r"D:\Thi\Padm\Assignment 2\intermeditaeqtables\log(rand_inti(2)).csv"
+csv_path = r"D:\Thi\Padm\Assignment 2\intermeditaeqtables\log(6).csv"
 
-def log_episode_result(episode,t_rewards):
+def log_episode_result(episode,t_rewards,q_values,steps,done,epsilon_):
     file_exists = os.path.isfile(csv_path)
     with open(csv_path, mode='a', newline='') as file:
         writer = csv.writer(file)
         if not file_exists:
-            writer.writerow(["Episode", "Result","Total Reward"])
-        writer.writerow([episode, "Success", t_rewards])
+            writer.writerow(["Episode", "Result","Total Reward","q_values", "steps", "epsilon"])
+        writer.writerow([episode, "Success" if done else "Fail", t_rewards, q_values, steps, epsilon_])
 
 
 # Function 1: Train Q-learning agent
@@ -34,64 +34,69 @@ def train_q_learning(env,
 
     # Q-learning algorithm:
     # ---------------------
-    #! Step 1: Run the algorithm for fixed number of episodes
+    #! Run the algorithm for fixed number of episodes
     #! -------
     try:
         for episode in range(no_episodes):
             state = env.reset()
-
             state = tuple(state)
             total_reward = 0
+            max_steps = 10000
 
-            #! Step 2: Take actions in the environment until "Done" flag is triggered
-            #! -------
-            while True:
-                #! Step 3: Define your Exploration vs. Exploitation
-                #! -------
+            # max_steps
+            for step in range(max_steps):
+
+                # Step 3: Exploration vs. Exploitation
                 if np.random.rand() < epsilon:
                     action = env.action_space.sample()  # Explore
                 else:
                     action = np.argmax(q_table[state])  # Exploit
 
                 next_state, reward, done, _ = env.step(action)
-
+    
                 next_state = tuple(next_state)
                 total_reward += reward
 
-                #! Step 4: Update the Q-values using the Q-value update rule
-                #! -------
-                q_table[state][action] = q_table[state][action] + alpha * \
-                    (reward + gamma *
-                    np.max(q_table[next_state]) - q_table[state][action])
+                # Step 4: Q-learning update
+                q_table[state][action] = q_table[state][action] + alpha * (
+                    reward + gamma * np.max(q_table[next_state]) - q_table[state][action]
+                )
 
                 state = next_state
 
-                #! Step 5: Stop the episode if the agent reaches Goal or Hell-states
-                #! -------
                 if done:
-                    break
-            #! Step 6: Perform epsilon decay
-            #! -------
-            epsilon = max(epsilon_min, epsilon * epsilon_decay)
+                    break  # Exit early if goal reached
+
+            # Epsilon decay
+            if (episode+1) % 2 == 0:
+                epsilon = max(epsilon_min, epsilon * epsilon_decay)
 
             print(f"Episode {episode + 1}: Total Reward: {total_reward}")
 
-            print(f"in episode{episode+1}")
-            if (episode + 1) % 100 == 0:
-                np.save(f"D:\Thi\Padm\Assignment 2\intermeditaeqtables\q_table_ep{episode+1}_randiniti.npy", q_table)
-                print(f"Checkpoint saved: q_table_ep{episode+1}.npy")
-            
-            if done:
-                log_episode_result(episode + 1,total_reward)
-            else:
-                log_episode_result(episode+1,total_reward)
+            # Step 6: Log results
+            log_episode_result(
+                episode + 1,
+                total_reward,
+                q_table[state][action],
+                steps=step + 1,
+                done=done,
+                epsilon_=epsilon
+            )
 
-        #! Step 7: Close the environment window
+            print(f"In episode {episode + 1}")
+
+            # Save intermediate Q-table
+            # if (episode + 1) % 100 == 0:
+            #     save_path = f"D:\\Thi\\Padm\\Assignment 2\\intermeditaeqtables\\q_table_ep{episode + 1}_randiniti.npy"
+            #     np.save(save_path, q_table)
+            #     print(f"Checkpoint saved: q_table_ep{episode + 1}_randiniti.npy")
+
+        #! Close the environme  nt window
         #! -------
         env.close()
         print("Training finished.\n")
 
-        #! Step 8: Save the trained Q-table
+        #! Save the trained Q-table
         #! -------
         np.save(q_table_save_path, q_table)
         print("Saved the final Q-table.")
@@ -186,17 +191,16 @@ def visualize_q_table(hell_state_coordinates=[(0, 1), (0, 8), (8, 1), (4, 0), (1
                 linecolor='gray'
             )
 
-            # ax.invert_yaxis()  # This makes (0, 0) at top-left to match Pygame grid
             ax.set_title(f'Action: {action}')
 
-            # Plot 'G' for goal
+            # 'G' for goal
             ax.text(gy + 0.5, gx + 0.5, 'G', color='green',
                     ha='center', va='center', weight='bold', fontsize=14)
             
             ax.text(Ay + 0.5, Ax + 0.5, 'A', color='grey',
                     ha='center', va='center', weight='bold', fontsize=14)
 
-            # Plot 'H' for all hell states
+            # 'H' for all hell states
             for hx, hy in hell_state_coordinates:
                 ax.text(hy + 0.5, hx + 0.5, 'H', color='red',
                         ha='center', va='center', weight='bold', fontsize=14)
