@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import csv,os
 
-csv_path = r"D:\Thi\Padm\Assignment 2\intermeditaeqtables\log(6).csv"
+csv_path = r"D:\Thi\Padm\Assignment 2\intermeditaeqtables\log(7).csv"
 
 def log_episode_result(episode,t_rewards,q_values,steps,done,epsilon_):
     file_exists = os.path.isfile(csv_path)
@@ -41,7 +41,8 @@ def train_q_learning(env,
             state = env.reset()
             state = tuple(state)
             total_reward = 0
-            max_steps = 10000
+            # max_steps = 10000
+            max_steps = int(500 + (1 - epsilon) * 500)
 
             # max_steps
             for step in range(max_steps):

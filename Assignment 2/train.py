@@ -16,17 +16,17 @@ In this case, it is better to use a random initialization.
 """
 random_initialization = True  # If True, the Q-table will be initialized randomly
 
-learning_rate = 0.01  # Learning rate
+learning_rate = 0.1  # Learning rate
 gamma = 0.99  # Discount factor
 epsilon = 1.0  # Exploration rate
 epsilon_min = 0.1  # Minimum exploration rate
 epsilon_decay = 0.999  # Decay rate for exploration
-no_episodes = 1_000  # Number of episodes
+no_episodes = 5_000  # Number of episodes
 
 goal_coordinates = (7,5)
 
-# Define all hell state coordinates as a tuple within a list
-hell_state_coordinates = [(1, 0), (8, 0), (1, 8), (0, 4), (0, 1), (4, 8), (8, 8),(3, 4), (5, 2)]
+# # Define all hell state coordinates as a tuple within a list
+# hell_state_coordinates = [(1, 0), (8, 0), (1, 8), (0, 4), (0, 1), (4, 8), (8, 8),(3, 4), (5, 2)]
 
 
 # Execute:
@@ -36,12 +36,12 @@ if train:
     # --------------------------------------
     env = create_env()
 
-    env_rec = RecordVideo(
-    env,
-    video_folder= r"D:\Thi\Padm\viedos",
-    episode_trigger=lambda ep: ep % 500 == 0,
-    name_prefix="qlearning"
-    )
+    # env_rec = RecordVideo(
+    # env,
+    # video_folder= r"D:\Thi\Padm\viedos",
+    # episode_trigger=lambda ep: ep % 500 == 0,
+    # name_prefix="qlearning"
+    # )
 
     # Train a Q-learning agent:
     # -------------------------

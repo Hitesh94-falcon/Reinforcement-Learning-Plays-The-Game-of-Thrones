@@ -14,16 +14,15 @@ class PadmEnv(gym.Env):
         self.captured_kingdoms = set()
 
         self.action_space = gym.spaces.Discrete(4)
-
         self.obstacles = {
-            "Dragon": [(1, 0), (8, 0), (1, 8),(0,4)],
-            "Night-walker": [(0, 1), (4, 8)],
-            "Army": [(8, 8), (3, 4), (5,2)]
+            "Dragon": [np.array([1, 0]), np.array([8, 0]), np.array([1, 8]), np.array([0, 4])],
+            "Night-walker": [np.array([0, 1]), np.array([4, 8])],
+            "Army": [np.array([8, 8]), np.array([3, 4]), np.array([5, 2])]
         }
 
         self.rewards = {
-            "Dragon-eggs": [(5, 0), (8, 6), (5, 7)],
-            "Kingdoms": [(0,6), (2, 6), (4, 3), (7, 2),(2,2)]
+            "Dragon-eggs": [np.array([5, 0]), np.array([8, 6]), np.array([5, 7])],
+            "Kingdoms": [np.array([0, 6]), np.array([2, 6]), np.array([4, 3]), np.array([7, 2]), np.array([2, 2])]
         }
 
 
@@ -62,14 +61,14 @@ class PadmEnv(gym.Env):
         else:
             self.images = {}
 
-    def reset(self,random_initialization=False):
+    def reset(self,random_initialization=True):
         if random_initialization:
             print("the agent is being intalized randomly")
 
             while True:
                 x_rand = np.random.randint(0, self.grid_size)
                 y_rand = np.random.randint(0, self.grid_size)
-                if (x_rand, y_rand) not in sum(self.obstacles.values(), []):
+                if not any(np.array_equal(np.array([x_rand, y_rand]), obs) for obs in sum(self.obstacles.values(), [])):
                     self.agent_state = np.array([x_rand, y_rand])
                     break
         else:
@@ -134,7 +133,7 @@ class PadmEnv(gym.Env):
         if all_kingdoms_captured:
             reward += -0.5 * distance_to_goal
         else:
-            reward += -0.3 * distance_to_goal
+            reward += -0.2 * distance_to_goal
 
         return self.agent_state, reward, done, info
 
