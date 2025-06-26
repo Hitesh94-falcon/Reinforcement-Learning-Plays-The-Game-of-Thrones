@@ -5,15 +5,15 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import csv,os
 
-csv_path = r"D:\Thi\Padm\Assignment 2\intermeditaeqtables\log(9).csv"
+csv_path = r"D:\Thi\Padm\Assignment 2\intermeditaeqtables\log(10).csv"
 
-def log_episode_result(episode,t_rewards,q_values,hurray,epsilon_):
+def log_episode_result(episode,t_rewards,q_values,hurray,epsilon_,steps):
     file_exists = os.path.isfile(csv_path)
     with open(csv_path, mode='a', newline='') as file:
         writer = csv.writer(file)
         if not file_exists:
-            writer.writerow(["Episode", "Result","Total Reward","q_values", "epsilon"])
-        writer.writerow([episode, "Success" if hurray else "Fail", t_rewards, q_values, epsilon_])
+            writer.writerow(["Episode", "Result","Total Reward","q_values", "epsilon", "max_step"])
+        writer.writerow([episode, "Success" if hurray else "Fail", t_rewards, q_values, epsilon_, steps])
 
 
 # Function 1: Train Q-learning agent
@@ -35,15 +35,17 @@ def train_q_learning(env,
     # ---------------------
     #! Run the algorithm for fixed number of episodes
     #! -------
+    max_steps = 20000
     try:
         for episode in range(no_episodes):
             state = env.reset()
             state = tuple(state)
             total_reward = 0
+            hurray = False
+            steps = 0
+            for max_step in range(max_steps):
 
-            while True:
-                #! Step 3: Define your Exploration vs. Exploitation
-                #! -------
+                # Step 3: Exploration vs. Exploitation
                 if np.random.rand() < epsilon:
                     action = env.action_space.sample()  # Explore
                 else:
@@ -55,38 +57,40 @@ def train_q_learning(env,
                 next_state = tuple(next_state)
                 total_reward += reward
 
-                #! Step 4: Update the Q-values using the Q-value update rule
-                #! -------
-                q_table[state][action] = q_table[state][action] + alpha * \
-                    (reward + gamma *
-                    np.max(q_table[next_state]) - q_table[state][action])
+                # Step 4: Q-learning update
+                q_table[state][action] = q_table[state][action] + alpha * (
+                    reward + gamma * np.max(q_table[next_state]) - q_table[state][action]
+                )
 
                 state = next_state
+                steps += 1
 
-                #! Step 5: Stop the episode if the agent reaches Goal or Hell-states
-                #! -------
-                hurray = False
                 if done:
                     if env.reached_goal:
                         hurray = True
-                    break
-                
-                if hurray:
-                    print("Goal Reached")
-            # Epsilon decay
+                    break  
+
+            # Epsilon decay after each episode
             epsilon = max(epsilon_min, epsilon * epsilon_decay)
 
             # Logging
-            log_episode_result(episode + 1, total_reward, q_table[state][action], done=done, epsilon_=epsilon)
+            log_episode_result(
+                    episode + 1,
+                    total_reward,
+                    q_table[state][action],
+                    hurray=hurray,
+                    epsilon_=epsilon,
+                    steps=steps
+                )
 
             print(f"Episode {episode + 1}: Total Reward: {total_reward}")
+
             if (episode + 1) % 500 == 0:
                 save_path = f"D:\\Thi\\Padm\\Assignment 2\\intermeditaeqtables\\q_table_ep{episode + 1}_randiniti.npy"
                 np.save(save_path, q_table)
                 print(f"Checkpoint saved: q_table_ep{episode + 1}_randiniti.npy")
 
-
-        #! Close the environme  nt window
+        #! Close the environment window
         #! -------
         env.close()
         print("Training finished.\n")
