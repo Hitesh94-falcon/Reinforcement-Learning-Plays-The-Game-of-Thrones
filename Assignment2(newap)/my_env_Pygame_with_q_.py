@@ -15,15 +15,16 @@ class PadmEnv(gym.Env):
 
         self.action_space = gym.spaces.Discrete(4)
         self.obstacles = {
-            "Dragon": [np.array([1, 0]), np.array([8, 0]), np.array([1, 8]), np.array([0, 4])],
-            "Night-walker": [np.array([0, 1]), np.array([4, 8])],
-            "Army": [np.array([8, 8]), np.array([3, 4]), np.array([5, 2])]
+            "Dragon": [np.array([0, 1]), np.array([0, 8]), np.array([8, 1]), np.array([4, 0])],
+            "Night-walker": [np.array([1, 0]), np.array([8, 4])],
+            "Army": [np.array([8, 8]), np.array([4, 3]), np.array([2, 5])]
         }
 
         self.rewards = {
-            "Dragon-eggs": [np.array([5, 0]), np.array([8, 6]), np.array([5, 7])],
-            "Kingdoms": [np.array([0, 6]), np.array([2, 6]), np.array([4, 3]), np.array([7, 2]), np.array([2, 2])]
+            "Dragon-eggs": [np.array([0, 5]), np.array([6, 8]), np.array([7, 5])],
+            "Kingdoms": [np.array([6, 0]), np.array([6, 2]), np.array([3, 4]), np.array([2, 7]), np.array([2, 2])]
         }
+
 
 
         self.kingdoms = ["Harrenhall", "River-Lands", "Kings-Landing", "storm-lands", "Westeros"]
@@ -106,21 +107,21 @@ class PadmEnv(gym.Env):
                 reward = 100
             if len(self.kingdoms) == len(self.captured_kingdoms):
                 print("All the kigdoms captured..... Valhalla")
-            else:
-                reward = -10 
-                print("You must capture all kingdoms before reaching the throne!")
+            # else:
+            #     reward = -10 
+            #     print("You must capture all kingdoms before reaching the throne!")
 
 
         for egg in self.rewards["Dragon-eggs"]:
             if np.array_equal(self.agent_state, egg):
-                reward += 10
+                reward += 2
 
         for idx, k_pos in enumerate(self.rewards["Kingdoms"]):
             if np.array_equal(self.agent_state, k_pos):
                 kingdom_name = self.kingdoms[idx]
                 if kingdom_name not in self.captured_kingdoms:
                     self.captured_kingdoms.add(kingdom_name) 
-                reward += 20    
+                reward += 60    
         
 
         in_obstacle = any(np.array_equal(self.agent_state, obs) for obs in all_obstacles)
@@ -128,7 +129,8 @@ class PadmEnv(gym.Env):
             reward = -25
             
         distance_to_goal = np.linalg.norm(self.goal_state - self.agent_state)
-        info = {"Distance to Goal": distance_to_goal}
+        info = {"Distance to Goal": distance_to_goal,
+                "all_kingdoms_captured" : all_kingdoms_captured}
 
         # if all_kingdoms_captured:
         #     reward += -0.5 * distance_to_goal

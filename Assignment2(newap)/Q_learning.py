@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import csv,os
 
-csv_path = r"D:\Thi\Padm\Assignment 2\intermeditaeqtables\log(8).csv"
+csv_path = r"D:\Thi\Padm\Assignment2(newap)\logs\log(3).csv"
 
 def log_episode_result(episode,t_rewards,q_values,steps,done,epsilon_):
     file_exists = os.path.isfile(csv_path)
@@ -42,7 +42,7 @@ def train_q_learning(env,
             state = env.reset()
             state = tuple(state)
             total_reward = 0
-            max_steps = 10000
+            max_steps = 10_000
             # # max_steps = int(500 + (1 - epsilon) * 1000)
             # if epsilon < 0.7:
             #     max_steps = 20000
@@ -51,11 +51,6 @@ def train_q_learning(env,
 
             # max_steps
             for step in range(max_steps):
-                
-                if env.all_kingdoms_captured:
-                    q_table = q_table_goal
-                else:
-                    q_table = q_table_kingdoms
 
                 # Step 3: Exploration vs. Exploitation
                 if np.random.rand() < epsilon:
@@ -63,7 +58,12 @@ def train_q_learning(env,
                 else:
                     action = np.argmax(q_table[state])  # Exploit
 
-                next_state, reward, done, _ = env.step(action)
+                next_state, reward, done, info = env.step(action)
+
+                if info.get("all_kingdoms_captured"):
+                    q_table = q_table_goal
+                else:
+                    q_table = q_table_kingdoms
     
                 next_state = tuple(next_state)
                 total_reward += reward
@@ -78,9 +78,11 @@ def train_q_learning(env,
                 if done:
                     break  # Exit early if goal reached
 
-            # Epsilon decay
-            if (episode+1) % 2 == 0:
-                epsilon = max(epsilon_min, epsilon * epsilon_decay)
+
+            # epsilon = max(epsilon_min, epsilon * epsilon_decay)
+            decay_rate = (epsilon - epsilon_min) / no_episodes
+            epsilon = max(epsilon_min, epsilon - decay_rate)
+
 
             print(f"Episode {episode + 1}: Total Reward: {total_reward}")
 
@@ -102,7 +104,7 @@ def train_q_learning(env,
             #     np.save(save_path, q_table)
             #     print(f"Checkpoint saved: q_table_ep{episode + 1}_randiniti.npy")
 
-        #! Close the environme  nt window
+        #! Close the environment window
         #! -------
         env.close()
         print("Training finished.\n")
@@ -116,31 +118,24 @@ def train_q_learning(env,
         print("keyboard interupt detected,saving Q_table")
         np.save(q_table_save_path,q_table)
 
-# Function 2: Visualize the Q-table
-# -----------
-def visualize_q_table(hell_state_coordinates=[(0, 1), (0, 8), (8, 1), (4, 0), (1, 0), (8, 4), (8, 8), (4, 3), (2, 5)],
-                      goal_coordinates=(5,7),
-                      actions=["Up", "Down", "Right", "Left"],
-                      q_values_path="q_table.npy",
-                      ):
 
-    # Load the Q-table:
-    # -----------------
-   
+def visualize_q_table(env, q_values_path, actions=["Up", "Down", "Right", "Left"]):
     try:
-        q_table = np.load(q_values_path)  # Shape: (rows, cols, actions)
+        q_table = np.load(q_values_path)
 
         _, axes = plt.subplots(1, 4, figsize=(20, 5))
 
+        goal_coordinates = tuple(env.goal_state)
+        hell_state_coordinates = [tuple(obs) for obs in sum(env.obstacles.values(), [])]
+        agent_start = tuple(env.agent_state)
+
         for i, action in enumerate(actions):
             ax = axes[i]
-            heatmap_data = q_table[:, :, i].copy()  
+            heatmap_data = q_table[:, :, i].copy()
 
-            # Create mask
             mask = np.zeros_like(heatmap_data, dtype=bool)
             gx, gy = goal_coordinates
-            initial_agent_coordinates = (4,1)
-            Ax, Ay = initial_agent_coordinates
+            ax0, ay0 = agent_start
             mask[gx, gy] = True
             for hx, hy in hell_state_coordinates:
                 mask[hx, hy] = True
@@ -160,23 +155,15 @@ def visualize_q_table(hell_state_coordinates=[(0, 1), (0, 8), (8, 1), (4, 0), (1
             )
 
             ax.set_title(f'Action: {action}')
+            ax.text(gy + 0.5, gx + 0.5, 'G', color='green', ha='center', va='center', weight='bold', fontsize=14)
+            ax.text(ay0 + 0.5, ax0 + 0.5, 'A', color='grey', ha='center', va='center', weight='bold', fontsize=14)
 
-            # 'G' for goal
-            
-            ax.text(gy + 0.5, gx + 0.5, 'G', color='green',
-                    ha='center', va='center', weight='bold', fontsize=14)
-            
-            ax.text(Ay + 0.5, Ax + 0.5, 'A', color='grey',
-                    ha='center', va='center', weight='bold', fontsize=14)
-
-            # 'H' for all hell states
             for hx, hy in hell_state_coordinates:
-                ax.text(hy + 0.5, hx + 0.5, 'H', color='red',
-                        ha='center', va='center', weight='bold', fontsize=14)
+                ax.text(hy + 0.5, hx + 0.5, 'H', color='red', ha='center', va='center', weight='bold', fontsize=14)
 
         plt.tight_layout()
         plt.show()
 
     except FileNotFoundError:
-        print("No saved Q-table was found. Please train the Q-learning agent first or check your path.")
+        print("No saved Q-table was found.")
 

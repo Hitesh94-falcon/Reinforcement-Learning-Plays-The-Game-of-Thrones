@@ -15,14 +15,14 @@ class PadmEnv(gym.Env):
         self.action_space = gym.spaces.Discrete(4)
 
         self.obstacles = {
-            "Dragon": [(1, 0), (8, 0), (1, 8),(0,4)],
-            "Night-walker": [(0, 1), (4, 8)],
-            "Army": [(8, 8), (3, 4), (5,2)]
+            "Dragon": [np.array([0, 1]), np.array([0, 8]), np.array([8, 1]), np.array([4, 0])],
+            "Night-walker": [np.array([1, 0]), np.array([8, 4])],
+            "Army": [np.array([8, 8]), np.array([4, 3]), np.array([2, 5])]
         }
 
         self.rewards = {
-            "Dragon-eggs": [(5, 0), (8, 6), (5, 7)],
-            "Kingdoms": [(0,6), (2, 6), (4, 3), (7, 2),(2,2)]
+            "Dragon-eggs": [np.array([0, 5]), np.array([6, 8]), np.array([7, 5])],
+            "Kingdoms": [np.array([6, 0]), np.array([6, 2]), np.array([3, 4]), np.array([2, 7]), np.array([2, 2])]
         }
 
 

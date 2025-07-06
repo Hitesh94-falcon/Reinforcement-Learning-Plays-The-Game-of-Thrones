@@ -4,7 +4,7 @@ import pygame
 
 
 class PadmEnv(gym.Env):
-    def __init__(self, grid_size=9, tile_size=64, render_mode=False):
+    def __init__(self, grid_size=9, tile_size=64, render_mode=True):
         super().__init__()
         self.grid_size = grid_size
         self.tile_size = tile_size
@@ -16,15 +16,16 @@ class PadmEnv(gym.Env):
 
         self.action_space = gym.spaces.Discrete(4)
         self.obstacles = {
-            "Dragon": [np.array([1, 0]), np.array([8, 0]), np.array([1, 8]), np.array([0, 4])],
-            "Night-walker": [np.array([0, 1]), np.array([4, 8])],
-            "Army": [np.array([8, 8]), np.array([3, 4]), np.array([5, 2])]
+            "Dragon": [np.array([0, 1]), np.array([0, 8]), np.array([8, 1]), np.array([4, 0])],
+            "Night-walker": [np.array([1, 0]), np.array([8, 4])],
+            "Army": [np.array([8, 8]), np.array([4, 3]), np.array([2, 5])]
         }
 
         self.rewards = {
-            "Dragon-eggs": [np.array([5, 0]), np.array([8, 6]), np.array([5, 7])],
-            "Kingdoms": [np.array([0, 6]), np.array([2, 6]), np.array([4, 3]), np.array([7, 2]), np.array([2, 2])]
+            "Dragon-eggs": [np.array([0, 5]), np.array([6, 8]), np.array([7, 5])],
+            "Kingdoms": [np.array([6, 0]), np.array([6, 2]), np.array([3, 4]), np.array([2, 7]), np.array([2, 2])]
         }
+
 
 
         self.kingdoms = ["Harrenhall", "River-Lands", "Kings-Landing", "storm-lands", "Westeros"]
@@ -62,7 +63,7 @@ class PadmEnv(gym.Env):
         else:
             self.images = {}
 
-    def reset(self,random_initialization=False):
+    def reset(self,random_initialization=True):
         if random_initialization:
             print("the agent is being intalized randomly")
 
@@ -133,7 +134,6 @@ class PadmEnv(gym.Env):
 
         if all_kingdoms_captured:
             reward += -0.5 * distance_to_goal
-        
 
         return self.agent_state, reward, done, info
 
@@ -173,5 +173,5 @@ class PadmEnv(gym.Env):
     def close(self):
         pygame.quit()
 
-def create_env(grid_size=9, render_mode=False):
+def create_env(grid_size=9, render_mode=True):
     return PadmEnv(grid_size=grid_size, render_mode=render_mode)

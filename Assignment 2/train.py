@@ -16,14 +16,14 @@ In this case, it is better to use a random initialization.
 """
 random_initialization = True  # If True, the Q-table will be initialized randomly
 
-learning_rate = 0.01  # Learning rate
+learning_rate = 0.001  # Learning rate
 gamma = 0.99  # Discount factor
 epsilon = 1.0  # Exploration rate
 epsilon_min = 0.1  # Minimum exploration rate
 epsilon_decay = 0.995  # Decay rate for exploration
-no_episodes = 1_0000  # Number of episodes
+no_episodes = 1_000  # Number of episodes
 
-goal_coordinates = (7,5)
+# goal_coordinates = (7,5)
 
 # # Define all hell state coordinates as a tuple within a list
 # hell_state_coordinates = [(1, 0), (8, 0), (1, 8), (0, 4), (0, 1), (4, 8), (8, 8),(3, 4), (5, 2)]
@@ -56,4 +56,4 @@ if train:
 if visualize_results:
     # Visualize the Q-table:
     # ----------------------
-    visualize_q_table(q_values_path="q_table.npy")
+    visualize_q_table(env=env,q_values_path="q_table.npy")
