@@ -6,20 +6,20 @@ This project is a **Reinforcement Learning (RL)** simulation inspired by the fam
 
 ## 📌 Project Structure
 
-RL-GOT-Project/
-├── Q_learning.py # Q-learning training logic
-├── my_env.py # Custom Gymnasium environment
-├── train.py # Main training runner
-├── test.py # Evaluation/testing script
-├── utils.py # Logging utilities
-├── Images/ # Game sprites (agent, goal, obstacles, etc.)
-│ ├── obstacles/
-│ ├── rewards/
-│ └── states/
-├── q_tables/ # Saved Q-tables (.npy files)
-├── logs/ # Training logs (CSV)
-├── requirements.txt # Required Python packages
-└── Padm Presentation.pptx
+- `Q_learning.py`: Q-learning training logic  
+- `my_env.py`: Custom Gymnasium environment  
+- `train.py`: Main training runner  
+- `test.py`: Evaluation/testing script  
+- `utils.py`: Logging utilities  
+- `Images/`: Game sprites (agent, goal, obstacles, etc.)  
+  - `obstacles/`
+  - `rewards/`
+  - `states/`
+- `q_tables/`: Saved Q-tables (.npy files)  
+- `logs/`: Training logs (CSV)  
+- `requirements.txt`: Required Python packages  
+- `Padm Presentation.pptx`: Project presentation
+
 
 ## 🚀 Features
 
