@@ -54,5 +54,7 @@ Build user interface for dynamic level design
 
 ## Author
 Hitesh Suresh
+
 M.Sc. Artificial Intelligence for Autonomous Systems
+
 Technische Hochschule Ingolstadt
