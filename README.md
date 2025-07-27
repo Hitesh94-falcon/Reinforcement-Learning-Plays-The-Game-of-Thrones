@@ -4,7 +4,7 @@ This project is a **Reinforcement Learning (RL)** simulation inspired by the fam
 
 ---
 
-## 📌 Project Structure
+##  Project Structure
 
 - `Q_learning.py`: Q-learning training logic  
 - `my_env.py`: Custom Gymnasium environment  
@@ -21,7 +21,7 @@ This project is a **Reinforcement Learning (RL)** simulation inspired by the fam
 - `Padm Presentation.pptx`: Project presentation
 
 
-## 🚀 Features
+##  Features
 
 - Multi-phase Q-learning with separate Q-tables:
 - Kingdom 1 → Kingdom 2 → Kingdom 3 → Goal
@@ -30,9 +30,9 @@ This project is a **Reinforcement Learning (RL)** simulation inspired by the fam
 - Visualization of Q-tables using seaborn heatmaps
 - Logging of rewards, epsilon, and success/failure per episode
 
-## 🛠️ How to Run
+##  How to Run
 
-### 📦 1. Install Dependencies
+###  1. Install Dependencies
 
 ```bash
 1. pip install -r requirements.txt
