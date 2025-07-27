@@ -40,17 +40,18 @@ This project is a **Reinforcement Learning (RL)** simulation inspired by the fam
 2. python train.py #set visualization to true to visualize the Q-tables
 
 3. python test.py
+```
 
-
-Acknowledgements
+## Acknowledgements
 Project developed for Principles of Autonomy and Decision Making
+
 Inspired by: OpenAI Gym, Game of Thrones, MinimalRL
 
-Future Improvements
+## Future Improvements
 Implement Deep Q-Learning (DQN)
+
 Build user interface for dynamic level design
 
-Author
-Hitesh Suresh
+## Author
 M.Sc. Artificial Intelligence for Autonomous Systems
 Technische Hochschule Ingolstadt
